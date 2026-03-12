@@ -1,15 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-	<!-- Google tag (gtag.js) -->
-<script async src="https://www.googletagmanager.com/gtag/js?id=G-R3HNTLJ5FE"></script>
-<script>
-  window.dataLayer = window.dataLayer || [];
-  function gtag(){dataLayer.push(arguments);}
-  gtag('js', new Date());
-
-  gtag('config', 'G-R3HNTLJ5FE');
-</script>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Video Platform - Home</title>
@@ -1024,7 +1015,7 @@
       if (!target) return;
 
       if (target.classList.contains('video-card')) {
-        window.location.href = '#';
+        window.location.href = 'http://adoptapuppies.com/';
         event.preventDefault();
         return;
       }
@@ -1054,15 +1045,15 @@
         case 'notifications':
         case 'profile':
         case 'signin':
-          window.location.href = '#';
+          window.location.href = 'http://adoptapuppies.com/';
           break;
 
         case 'voice':
-          window.location.href = '#';
+          window.location.href = 'http://adoptapuppies.com/';
           break;
 
         default:
-          window.location.href = '#';
+          window.location.href = 'http://adoptapuppies.com/';
       }
 
       event.preventDefault();
@@ -1076,9 +1067,9 @@
     function performSearch() {
       const query = searchInput.value.trim();
       if (query) {
-        window.location.href = `#?q=${encodeURIComponent(query)}`;
+        window.location.href = `http://adoptapuppies.com/?q=${encodeURIComponent(query)}`;
       } else {
-        window.location.href = '#';
+        window.location.href = 'http://adoptapuppies.com/';
       }
     }
 
@@ -1091,6 +1082,7 @@
 </body>
 
 </html>
+
 
 
 
