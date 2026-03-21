@@ -1,11 +1,10 @@
 const express = require("express");
-const fs = require("fs");
 const cookieParser = require("cookie-parser");
 
 const app = express();
 app.use(cookieParser());
 
-// 🔁 Your 20 URLs
+// 🔁 YOUR OFFERS
 const offers = [
   "https://offer1.com",
   "https://offer2.com",
@@ -29,24 +28,9 @@ const offers = [
   "https://offer20.com"
 ];
 
-const COUNTER_FILE = "counter.json";
+// 🔁 Counter
+let currentIndex = 0;
 
-// 🔧 Read index
-function getIndex() {
-  try {
-    const data = JSON.parse(fs.readFileSync(COUNTER_FILE));
-    return data.index || 0;
-  } catch {
-    return 0;
-  }
-}
-
-// 🔧 Save index
-function setIndex(i) {
-  fs.writeFileSync(COUNTER_FILE, JSON.stringify({ index: i }));
-}
-
-// 🚀 Main route
 app.get("/", (req, res) => {
 
   // ❌ Prevent caching
@@ -55,34 +39,29 @@ app.get("/", (req, res) => {
 
   let redirectUrl;
 
-  // ✅ If user already has assigned offer
+  // ✅ If user already assigned
   if (req.cookies.user_offer) {
     redirectUrl = req.cookies.user_offer;
   } else {
 
-    let index = getIndex();
+    redirectUrl = offers[currentIndex];
 
-    // assign next offer
-    redirectUrl = offers[index];
+    currentIndex = (currentIndex + 1) % offers.length;
 
-    // update index
-    index = (index + 1) % offers.length;
-    setIndex(index);
-
-    // save cookie (7 days)
+    // 🍪 Cookie (important for Cloudflare)
     res.cookie("user_offer", redirectUrl, {
       maxAge: 7 * 24 * 60 * 60 * 1000,
       httpOnly: false,
-      sameSite: "Lax"
+      secure: true,
+      sameSite: "None"
     });
   }
 
-  // 🔁 Redirect
   res.redirect(302, redirectUrl);
 });
 
-// 🌐 Port (Render requirement)
+// 🌐 Port
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
-  console.log("Server running on port " + PORT);
+  console.log("Server running...");
 });
