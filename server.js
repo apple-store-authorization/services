@@ -4,55 +4,64 @@ const cookieParser = require("cookie-parser");
 const app = express();
 app.use(cookieParser());
 
-// 🔁 ADD YOUR 20 OFFERS HERE
+app.set("trust proxy", 1);
+
+// 🔁 YOUR OFFERS
 const offers = [
   "https://offer1.com",
   "https://offer2.com",
   "https://offer3.com",
   "https://offer4.com",
-  "https://offer5.com",
-  "https://offer6.com",
-  "https://offer7.com",
-  "https://offer8.com",
-  "https://offer9.com",
-  "https://offer10.com",
-  "https://offer11.com",
-  "https://offer12.com",
-  "https://offer13.com",
-  "https://offer14.com",
-  "https://offer15.com",
-  "https://offer16.com",
-  "https://offer17.com",
-  "https://offer18.com",
-  "https://offer19.com",
-  "https://offer20.com"
+  "https://offer5.com"
 ];
 
-// 🔁 ROUND ROBIN COUNTER
 let currentIndex = 0;
 
-app.set("trust proxy", 1);
+// 🤖 BOT DETECTION FUNCTION
+function isBot(req) {
+  const ua = (req.headers["user-agent"] || "").toLowerCase();
 
+  const botKeywords = [
+    "bot", "crawler", "spider", "curl", "wget",
+    "python", "scrapy", "httpclient",
+    "headless", "phantom", "selenium",
+    "puppeteer", "playwright"
+  ];
+
+  for (let keyword of botKeywords) {
+    if (ua.includes(keyword)) return true;
+  }
+
+  // Missing important headers = suspicious
+  if (!req.headers["accept-language"]) return true;
+
+  return false;
+}
+
+// 🚀 MAIN ROUTE
 app.get("/", (req, res) => {
 
-  // ❌ Prevent caching (VERY IMPORTANT)
+  // ❌ Prevent caching
   res.setHeader("Cache-Control", "no-store, no-cache, must-revalidate, max-age=0");
   res.setHeader("Pragma", "no-cache");
 
+  // 🤖 BOT CHECK
+  if (isBot(req)) {
+    return res.redirect(302, "https://google.com"); // SAFE PAGE
+  }
+
   let redirectUrl;
 
-  // ✅ If returning user
+  // ✅ RETURNING USER
   if (req.cookies.user_offer) {
     redirectUrl = req.cookies.user_offer;
   } else {
 
-    // 🔁 Assign next offer
+    // 🔁 ROUND ROBIN
     redirectUrl = offers[currentIndex];
-
-    // update index
     currentIndex = (currentIndex + 1) % offers.length;
 
-    // 🍪 Save cookie (Cloudflare safe)
+    // 🍪 COOKIE
     res.cookie("user_offer", redirectUrl, {
       maxAge: 7 * 24 * 60 * 60 * 1000,
       secure: true,
@@ -60,12 +69,12 @@ app.get("/", (req, res) => {
     });
   }
 
-  // 🔁 Redirect
+  // 🔁 REDIRECT
   res.redirect(302, redirectUrl);
 });
 
-// 🌐 PORT (Render requirement)
+// 🌐 START SERVER
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
-  console.log("Rotator running...");
+  console.log("Bot-filter rotator running...");
 });
