@@ -62,7 +62,7 @@ app.get("/", (req, res) => {
 
   // 💻 allow only desktop (Windows/Mac)
   if (!isAllowedDesktop(req)) {
-    return res.send("This offer is available only on desktop devices.");
+    return res.send("Website Under Maintenance - this site is temporarily unavailable due to scheduled updates, repairs, or technical issues, aiming to improve performance or security.");
   }
 
   // continue
