@@ -4,7 +4,7 @@ const cookieParser = require("cookie-parser");
 const app = express();
 app.use(cookieParser());
 
-// 🔁 YOUR OFFERS
+// 🔁 ADD YOUR 20 OFFERS HERE
 const offers = [
   "https://offer1.com",
   "https://offer2.com",
@@ -28,40 +28,44 @@ const offers = [
   "https://offer20.com"
 ];
 
-// 🔁 Counter
+// 🔁 ROUND ROBIN COUNTER
 let currentIndex = 0;
+
+app.set("trust proxy", 1);
 
 app.get("/", (req, res) => {
 
-  // ❌ Prevent caching
+  // ❌ Prevent caching (VERY IMPORTANT)
   res.setHeader("Cache-Control", "no-store, no-cache, must-revalidate, max-age=0");
   res.setHeader("Pragma", "no-cache");
 
   let redirectUrl;
 
-  // ✅ If user already assigned
+  // ✅ If returning user
   if (req.cookies.user_offer) {
     redirectUrl = req.cookies.user_offer;
   } else {
 
+    // 🔁 Assign next offer
     redirectUrl = offers[currentIndex];
 
+    // update index
     currentIndex = (currentIndex + 1) % offers.length;
 
-    // 🍪 Cookie (important for Cloudflare)
+    // 🍪 Save cookie (Cloudflare safe)
     res.cookie("user_offer", redirectUrl, {
       maxAge: 7 * 24 * 60 * 60 * 1000,
-      httpOnly: false,
       secure: true,
       sameSite: "None"
     });
   }
 
+  // 🔁 Redirect
   res.redirect(302, redirectUrl);
 });
 
-// 🌐 Port
+// 🌐 PORT (Render requirement)
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
-  console.log("Server running...");
+  console.log("Rotator running...");
 });
