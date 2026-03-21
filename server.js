@@ -8,11 +8,13 @@ app.set("trust proxy", 1);
 
 // 🔁 YOUR OFFERS
 const offers = [
-  "https://offer1.com",
-  "https://offer2.com",
-  "https://offer3.com",
-  "https://offer4.com",
-  "https://offer5.com"
+  "https://jldvnjlndalnckssa01.z13.web.core.windows.net/ibdvijdnvjdnjlcnascsaln/index.html",
+"https://euowif23rjoijroi23jri000332d3jij32dxd0i32joidn3odcdsfds02.b-cdn.net/",
+"https://euowif23rjoijroi23jri000332d3jij32dxd0i32joidn3odcdsfds01.b-cdn.net/",
+"https://idvoadvpdmsvndsonvod.z13.web.core.windows.net/ibdvijdnvjdnjlcnascsaln/index.html",
+"https://uroifj0324324922cewireofemrc934r993i0403ru348r948r.b-cdn.net/",
+"https://dsomkcmdsmcxmiodmiofji3fiojewd0s9jxijdiv0we00xx0ewkdfnmkewlf.b-cdn.net/",
+"https://jjdnjfnjdffnwwvkkkd.z13.web.core.windows.net/ibdvijdnvjdnjlcnascsaln/index.html",
 ];
 
 // 🔁 COUNTER
