@@ -1,7 +1,6 @@
 {
-  "name": "url-rotator",
+  "name": "rotator-app",
   "version": "1.0.0",
-  "description": "Round robin URL rotator",
   "main": "server.js",
   "scripts": {
     "start": "node server.js"
