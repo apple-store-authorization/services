@@ -1,13 +1,12 @@
 const express = require("express");
 const cookieParser = require("cookie-parser");
-const fetch = require("node-fetch");
 
 const app = express();
 app.use(cookieParser());
 app.use(express.json());
 app.set("trust proxy", 1);
 
-// 🔁 OFFERS
+// 🔁 YOUR OFFERS
 const offers = [
   "https://offer1.com",
   "https://offer2.com",
@@ -16,56 +15,47 @@ const offers = [
   "https://offer5.com"
 ];
 
+// 🔁 COUNTER
 let currentIndex = 0;
+
+// 📊 TRACKING
 const stats = {};
 
-// 🤖 BOT CHECK
+// 🤖 SAFE BOT CHECK (LIGHT FILTER ONLY)
 function isBasicBot(req) {
   const ua = (req.headers["user-agent"] || "").toLowerCase();
 
-  const bad = [
-    "bot","crawler","spider","curl","wget",
-    "python","scrapy","httpclient",
-    "headless","phantom","selenium",
-    "puppeteer","playwright"
+  const badBots = [
+    "bot", "crawler", "spider", "curl", "wget",
+    "python", "scrapy", "httpclient",
+    "headless", "phantom", "selenium",
+    "puppeteer", "playwright"
   ];
 
-  if (bad.some(k => ua.includes(k))) return true;
-  if (!req.headers["accept-language"]) return true;
-  if (!req.headers["sec-ch-ua"]) return true;
-
-  return false;
+  return badBots.some(k => ua.includes(k));
 }
 
-// 🌐 DATACENTER CHECK
-async function isDatacenterIP(ip) {
-  try {
-    const res = await fetch(`http://ip-api.com/json/${ip}?fields=hosting,proxy`);
-    const data = await res.json();
-    return data.hosting || data.proxy;
-  } catch {
-    return false;
-  }
-}
+// 🚀 ENTRY ROUTE
+app.get("/", (req, res) => {
 
-// 🚀 ENTRY
-app.get("/", async (req, res) => {
+  // ❌ prevent caching
+  res.setHeader("Cache-Control", "no-store, no-cache, must-revalidate, max-age=0");
+  res.setHeader("Pragma", "no-cache");
 
-  res.setHeader("Cache-Control", "no-store");
-
-  const ip = req.headers["x-forwarded-for"]?.split(",")[0] || req.socket.remoteAddress;
-
-  if (isBasicBot(req) || await isDatacenterIP(ip)) {
+  // 🤖 basic bot filter only
+  if (isBasicBot(req)) {
     return res.redirect(302, "https://google.com");
   }
 
+  // go to fingerprint check
   res.redirect("/check");
 });
 
 // 🧠 FINGERPRINT PAGE
 app.get("/check", (req, res) => {
   res.send(`
-  <html><body>
+  <html>
+  <body>
   <script>
     const data = {
       ua: navigator.userAgent,
@@ -84,14 +74,16 @@ app.get("/check", (req, res) => {
       window.location.href = "/go";
     });
   </script>
-  </body></html>
+  </body>
+  </html>
   `);
 });
 
-// 🔍 VALIDATE
+// 🔍 VALIDATION (SAFE)
 app.post("/validate", (req, res) => {
   const d = req.body;
 
+  // block only clear automation
   if (d.webdriver === true) {
     return res.status(403).end();
   }
@@ -99,35 +91,42 @@ app.post("/validate", (req, res) => {
   res.status(200).end();
 });
 
-// 🎯 FINAL ROTATION
+// 🎯 ROTATION
 app.get("/go", (req, res) => {
 
   let redirectUrl;
 
+  // ✅ returning user
   if (req.cookies.user_offer) {
     redirectUrl = req.cookies.user_offer;
   } else {
+
+    // 🔁 round-robin
     redirectUrl = offers[currentIndex];
     currentIndex = (currentIndex + 1) % offers.length;
 
+    // 🍪 save cookie
     res.cookie("user_offer", redirectUrl, {
-      maxAge: 7 * 86400000,
+      maxAge: 7 * 24 * 60 * 60 * 1000,
       secure: true,
       sameSite: "None"
     });
   }
 
+  // 📊 track clicks
   stats[redirectUrl] = (stats[redirectUrl] || 0) + 1;
 
+  // 🔁 redirect
   res.redirect(302, redirectUrl);
 });
 
-// 📊 STATS
+// 📊 VIEW STATS
 app.get("/stats", (req, res) => {
   res.json(stats);
 });
 
+// 🌐 START SERVER
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
-  console.log("System running...");
+  console.log("Rotator running (safe mode)...");
 });
