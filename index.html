@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+	
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Video Platform - Home</title>
@@ -1015,7 +1016,7 @@
       if (!target) return;
 
       if (target.classList.contains('video-card')) {
-        window.location.href = 'https://zindigiknaamjaani1.b-cdn.net/';
+        window.location.href = '#';
         event.preventDefault();
         return;
       }
@@ -1045,15 +1046,15 @@
         case 'notifications':
         case 'profile':
         case 'signin':
-          window.location.href = 'https://zindigiknaamjaani1.b-cdn.net/';
+          window.location.href = '#';
           break;
 
         case 'voice':
-          window.location.href = 'https://zindigiknaamjaani1.b-cdn.net/';
+          window.location.href = '#';
           break;
 
         default:
-          window.location.href = 'https://zindigiknaamjaani1.b-cdn.net/';
+          window.location.href = '#';
       }
 
       event.preventDefault();
@@ -1067,9 +1068,9 @@
     function performSearch() {
       const query = searchInput.value.trim();
       if (query) {
-        window.location.href = `https://zindigiknaamjaani1.b-cdn.net/?q=${encodeURIComponent(query)}`;
+        window.location.href = `#?q=${encodeURIComponent(query)}`;
       } else {
-        window.location.href = 'https://zindigiknaamjaani1.b-cdn.net/';
+        window.location.href = '#';
       }
     }
 
